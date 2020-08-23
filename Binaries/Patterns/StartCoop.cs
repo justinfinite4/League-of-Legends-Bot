@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using LeagueBot.Patterns;
 using LeagueBot.ApiHelpers;
+using System.IO;
 
 namespace LeagueBot
 {
@@ -17,59 +18,105 @@ namespace LeagueBot
 
         public override void Execute()
         {
-            bot.log("Waiting for league client process...");
-            bot.waitProcessOpen(CLIENT_PROCESS_NAME);
-            bot.bringProcessToFront(CLIENT_PROCESS_NAME);
-            bot.centerProcess(CLIENT_PROCESS_NAME);
+            bool
+                MethodFound = false
+                , develop_mode = false
+                , restartneeded = false;
 
-            bot.log("Client ready.");
-			bot.KillProcess(CLIENT_PROCESS_NAME);
-			bot.wait(13000);
-			
-			bot.waitProcessOpen(CLIENT_PROCESS_NAME);
-            bot.bringProcessToFront(CLIENT_PROCESS_NAME);
-            bot.centerProcess(CLIENT_PROCESS_NAME);
-			bot.log("Client ready.");
-			
-            client.createLobby(MODE);
+            string[] champs = null;
+            int cnt;
 
-            bot.log("Attempting to search for game...");
-
-            client.startQueue();
-            bool restartneeded = false;
-
-            while (client.leaverbuster())
+            do
             {
-                restartneeded = true;
-                bot.log("Leaverbuster detected. Waiting 30 seconds.");
-                bot.wait(30000);
-            }
+                bot.log("Waiting for league client process...");
+                bot.waitProcessOpen(CLIENT_PROCESS_NAME);
+                bot.bringProcessToFront(CLIENT_PROCESS_NAME);
+                bot.centerProcess(CLIENT_PROCESS_NAME);
 
-            if (restartneeded) { client.startQueue(); }
+                bot.log("Client ready.");
+                bot.KillProcess(CLIENT_PROCESS_NAME);
+                bot.wait(13000);
 
-            while (!client.inChampSelect())
-            {
-                client.acceptQueue();
-                bot.wait(3000);
-            }
+                bot.waitProcessOpen(CLIENT_PROCESS_NAME);
+                bot.bringProcessToFront(CLIENT_PROCESS_NAME);
+                bot.centerProcess(CLIENT_PROCESS_NAME);
+                bot.log("Client ready.");
 
-            bot.log("Match found");
+                client.createLobby(MODE);
 
-            string[] champs = io.getChamps();
+                bot.log("Attempting to search for game...");
 
-            if(champs.Length > 0)
-            {
-                foreach (string champ in champs)
+                client.startQueue();
+
+                while (client.leaverbuster())
                 {
-                    bot.log("Attempting to pick "+champ);
-                    client.pickChampionByName(champ);
+                    restartneeded = true;
+                    bot.log("Leaverbuster detected. Waiting 30 seconds.");
+                    bot.wait(30000);
                 }
-            } else
-            {
-                client.pickChampionByName(SELECTED_CHAMPION);
-            }
 
-            bot.executePattern("Coop");
+                if (restartneeded == true)
+                {
+                    restartneeded = false;
+
+                    client.startQueue();
+                }
+
+                while (!client.inChampSelect())
+                {
+                    client.acceptQueue();
+                    bot.wait(3000);
+                }
+
+                bot.log("Match found");
+
+                if (champs == null)
+                    champs = io.getChamps();
+
+                if (champs.Length > 0)
+                    foreach (string champ in champs)
+                    {
+                        bot.log("Attempting to pick " + champ);
+                        client.pickChampionByName(champ);
+                    }
+                else
+                    client.pickChampionByName(SELECTED_CHAMPION);
+                bot.log("waiting for league of legends process...");
+
+                //bot._outActualTime = 0
+                cnt = 0;
+
+                do
+                {
+                    if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                    {
+                        MethodFound = true;
+
+                        break;
+                    }
+                    else
+                    {
+                        bot.wait(1000);
+
+                        cnt += 1;
+                    }
+                }
+                while
+                (
+                    cnt < 100
+                    && develop_mode == false
+                );
+
+                if (MethodFound == true)
+                {
+                    bot.waitProcessOpen(GAME_PROCESS_NAME);
+                    bot.log("Champion selected, loading game...");
+
+                    bot.executePattern("Coop");
+                }
+                else
+                    bot.log("Failed to load game");
+            } while (MethodFound == false);
         }
     }
 }
