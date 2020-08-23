@@ -221,7 +221,7 @@ namespace LeagueBot
 
                         health = game.player.getHealthPercent();
 
-                        if (health <= 40)
+                        if (health > 0 && health <= 40)
                         {
                             game.player.moveNearestBotlaneAllyTower();
                             bot.wait(3000);
