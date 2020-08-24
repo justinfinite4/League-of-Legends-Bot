@@ -64,8 +64,18 @@ namespace LeagueBot
 
                                 bot.log("Leaverbuster detected");
 
-                                while (client.leaverbuster())
-                                    bot.wait(3000);
+                                while (true)
+                                    try
+                                    {
+                                        if (client.leaverbuster() == true)
+                                            bot.wait(3000);
+                                        else
+                                            break;
+                                    }
+                                    catch
+                                    {
+                                        continue;
+                                    }
                             }
 
                             if (restartneeded == true)
