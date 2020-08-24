@@ -52,61 +52,63 @@ namespace LeagueBot
 
                     client.startQueue();
 
-                    if (client.leaverbuster())
-                    {
-                        restartneeded = true;
-
-                        bot.log("Leaverbuster detected");
-
-                        while (client.leaverbuster())
-                            bot.wait(500);
-                    }
-
-                    if (restartneeded == true)
-                    {
-                        restartneeded = false;
-
-                        client.startQueue();
-                    }
-
-                    while (!client.inChampSelect())
-                    {
-                        client.acceptQueue();
-                        bot.wait(3000);
-                    }
-
-                    bot.log("Match found");
-
-                    if (champs == null)
-                        champs = io.getChamps();
-
-                    if (champs.Length > 0)
-                        foreach (string champ in champs)
-                        {
-                            bot.log("Attempting to pick " + champ);
-                            client.pickChampionByName(champ);
-                        }
-                    else
-                        client.pickChampionByName(SELECTED_CHAMPION);
-                    bot.log("waiting for league of legends process...");
-
-                    //bot._outActualTime = 0
                     cnt = 0;
 
                     do
                     {
-                        if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                        if (client.leaverbuster())
                         {
-                            MethodFound = true;
+                            restartneeded = true;
 
-                            break;
+                            bot.log("Leaverbuster detected");
+
+                            while (client.leaverbuster())
+                                bot.wait(500);
+                        }
+
+                        if (restartneeded == true)
+                        {
+                            restartneeded = false;
+
+                            client.startQueue();
+                        }
+
+                        client.acceptQueue();
+
+                        bot.wait(1000);
+
+                        if (client.inChampSelect() == true)
+                        {
+                            bot.log("Match found");
+
+                            if (champs == null)
+                                champs = io.getChamps();
+
+                            if (champs.Length > 0)
+                                foreach (string champ in champs)
+                                {
+                                    bot.log("Attempting to pick " + champ);
+                                    client.pickChampionByName(champ);
+                                }
+                            else
+                                client.pickChampionByName(SELECTED_CHAMPION);
+
+                            while (client.inChampSelect() == true)
+                                bot.wait(1000);
                         }
                         else
                         {
-                            bot.wait(1000);
+                            if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                            {
+                                MethodFound = true;
 
-                            cnt += 1;
+                                bot.log("Found league of legends process");
+
+                                break;
+                            }
                         }
+
+                        cnt++;
                     }
                     while
                     (
