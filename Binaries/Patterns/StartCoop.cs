@@ -52,11 +52,14 @@ namespace LeagueBot
 
                     client.startQueue();
 
-                    while (client.leaverbuster())
+                    if (client.leaverbuster())
                     {
                         restartneeded = true;
-                        bot.log("Leaverbuster detected. Waiting 30 seconds.");
-                        bot.wait(30000);
+
+                        bot.log("Leaverbuster detected");
+
+                        while (client.leaverbuster())
+                            bot.wait(500);
                     }
 
                     if (restartneeded == true)
