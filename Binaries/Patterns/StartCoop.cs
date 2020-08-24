@@ -56,26 +56,29 @@ namespace LeagueBot
 
                     do
                     {
-                        if (client.leaverbuster())
+                        if (client.inChampSelect() == false)
                         {
-                            restartneeded = true;
+                            if (client.leaverbuster())
+                            {
+                                restartneeded = true;
 
-                            bot.log("Leaverbuster detected");
+                                bot.log("Leaverbuster detected");
 
-                            while (client.leaverbuster())
-                                bot.wait(6000);
+                                while (client.leaverbuster())
+                                    bot.wait(6000);
+                            }
+
+                            if (restartneeded == true)
+                            {
+                                restartneeded = false;
+
+                                client.startQueue();
+                            }
+
+                            client.acceptQueue();
+
+                            bot.wait(3000);
                         }
-
-                        if (restartneeded == true)
-                        {
-                            restartneeded = false;
-
-                            client.startQueue();
-                        }
-
-                        client.acceptQueue();
-
-                        bot.wait(3000);
 
                         if (client.inChampSelect() == true)
                         {
@@ -94,18 +97,19 @@ namespace LeagueBot
                                 client.pickChampionByName(SELECTED_CHAMPION);
 
                             while (client.inChampSelect() == true)
-                                bot.wait(6000);
-                        }
-                        else
-                        {
-                            if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
-                            {
-                                MethodFound = true;
+                                if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                                {
+                                    MethodFound = true;
 
-                                bot.log("Found league of legends process");
+                                    bot.log("Found league of legends process");
 
+                                    break;
+                                }
+                                else
+                                    bot.wait(6000);
+
+                            if (MethodFound == true)
                                 break;
-                            }
                         }
 
                         cnt++;
