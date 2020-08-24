@@ -63,7 +63,7 @@ namespace LeagueBot
                             bot.log("Leaverbuster detected");
 
                             while (client.leaverbuster())
-                                bot.wait(500);
+                                bot.wait(6000);
                         }
 
                         if (restartneeded == true)
@@ -75,7 +75,7 @@ namespace LeagueBot
 
                         client.acceptQueue();
 
-                        bot.wait(1000);
+                        bot.wait(6000);
 
                         if (client.inChampSelect() == true)
                         {
@@ -94,7 +94,7 @@ namespace LeagueBot
                                 client.pickChampionByName(SELECTED_CHAMPION);
 
                             while (client.inChampSelect() == true)
-                                bot.wait(1000);
+                                bot.wait(6000);
                         }
                         else
                         {
