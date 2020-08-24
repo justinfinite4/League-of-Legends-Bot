@@ -101,7 +101,7 @@ namespace LeagueBot
                                 {
                                     bot.log("Attempting to pick " + champ);
                                     client.pickChampionByName(champ);
-                                    bot.wait(1000);
+                                    bot.wait(6000);
                                 }
                             else
                             {
