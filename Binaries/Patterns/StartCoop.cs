@@ -97,16 +97,19 @@ namespace LeagueBot
                                 client.pickChampionByName(SELECTED_CHAMPION);
 
                             while (client.inChampSelect() == true)
+                            {
                                 if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
                                 {
                                     MethodFound = true;
 
                                     bot.log("Found league of legends process");
-
-                                    break;
                                 }
-                                else
-                                    bot.wait(6000);
+
+                                bot.wait(6000);
+
+                                if (MethodFound == true)
+                                    break;
+                            }
 
                             if (MethodFound == true)
                                 break;
