@@ -313,8 +313,6 @@ namespace LeagueBot
                     }
                 }
             }
-
-            bot.executePattern("EndCoop");
         }
 
         int incAllyIndex(int allyIndex)

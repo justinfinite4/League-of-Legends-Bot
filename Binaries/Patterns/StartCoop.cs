@@ -28,84 +28,89 @@ namespace LeagueBot
 
             do
             {
-                bot.log("Waiting for league client process...");
-                bot.waitProcessOpen(CLIENT_PROCESS_NAME);
-                bot.bringProcessToFront(CLIENT_PROCESS_NAME);
-                bot.centerProcess(CLIENT_PROCESS_NAME);
-
-                bot.log("Client ready.");
-                bot.KillProcess(CLIENT_PROCESS_NAME);
-                bot.wait(13000);
-
-                bot.waitProcessOpen(CLIENT_PROCESS_NAME);
-                bot.bringProcessToFront(CLIENT_PROCESS_NAME);
-                bot.centerProcess(CLIENT_PROCESS_NAME);
-                bot.log("Client ready.");
-
-                client.createLobby(MODE);
-
-                bot.log("Attempting to search for game...");
-
-                client.startQueue();
-
-                while (client.leaverbuster())
+                if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                    MethodFound = true;
+                else
                 {
-                    restartneeded = true;
-                    bot.log("Leaverbuster detected. Waiting 30 seconds.");
-                    bot.wait(30000);
-                }
+                    bot.log("Waiting for league client process...");
+                    bot.waitProcessOpen(CLIENT_PROCESS_NAME);
+                    bot.bringProcessToFront(CLIENT_PROCESS_NAME);
+                    bot.centerProcess(CLIENT_PROCESS_NAME);
 
-                if (restartneeded == true)
-                {
-                    restartneeded = false;
+                    bot.log("Client ready.");
+                    bot.KillProcess(CLIENT_PROCESS_NAME);
+                    bot.wait(13000);
+
+                    bot.waitProcessOpen(CLIENT_PROCESS_NAME);
+                    bot.bringProcessToFront(CLIENT_PROCESS_NAME);
+                    bot.centerProcess(CLIENT_PROCESS_NAME);
+                    bot.log("Client ready.");
+
+                    client.createLobby(MODE);
+
+                    bot.log("Attempting to search for game...");
 
                     client.startQueue();
-                }
 
-                while (!client.inChampSelect())
-                {
-                    client.acceptQueue();
-                    bot.wait(3000);
-                }
-
-                bot.log("Match found");
-
-                if (champs == null)
-                    champs = io.getChamps();
-
-                if (champs.Length > 0)
-                    foreach (string champ in champs)
+                    while (client.leaverbuster())
                     {
-                        bot.log("Attempting to pick " + champ);
-                        client.pickChampionByName(champ);
+                        restartneeded = true;
+                        bot.log("Leaverbuster detected. Waiting 30 seconds.");
+                        bot.wait(30000);
                     }
-                else
-                    client.pickChampionByName(SELECTED_CHAMPION);
-                bot.log("waiting for league of legends process...");
 
-                //bot._outActualTime = 0
-                cnt = 0;
-
-                do
-                {
-                    if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                    if (restartneeded == true)
                     {
-                        MethodFound = true;
+                        restartneeded = false;
 
-                        break;
+                        client.startQueue();
                     }
+
+                    while (!client.inChampSelect())
+                    {
+                        client.acceptQueue();
+                        bot.wait(3000);
+                    }
+
+                    bot.log("Match found");
+
+                    if (champs == null)
+                        champs = io.getChamps();
+
+                    if (champs.Length > 0)
+                        foreach (string champ in champs)
+                        {
+                            bot.log("Attempting to pick " + champ);
+                            client.pickChampionByName(champ);
+                        }
                     else
-                    {
-                        bot.wait(1000);
+                        client.pickChampionByName(SELECTED_CHAMPION);
+                    bot.log("waiting for league of legends process...");
 
-                        cnt += 1;
+                    //bot._outActualTime = 0
+                    cnt = 0;
+
+                    do
+                    {
+                        if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                        {
+                            MethodFound = true;
+
+                            break;
+                        }
+                        else
+                        {
+                            bot.wait(1000);
+
+                            cnt += 1;
+                        }
                     }
+                    while
+                    (
+                        cnt < 100
+                        && develop_mode == false
+                    );
                 }
-                while
-                (
-                    cnt < 100
-                    && develop_mode == false
-                );
 
                 if (MethodFound == true)
                 {
@@ -117,6 +122,8 @@ namespace LeagueBot
                 else
                     bot.log("Failed to load game");
             } while (MethodFound == false);
+
+            bot.executePattern("EndCoop");
         }
     }
 }
