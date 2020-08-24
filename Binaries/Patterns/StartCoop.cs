@@ -24,7 +24,9 @@ namespace LeagueBot
                 , restartneeded = false;
 
             string[] champs = null;
-            int cnt;
+            int 
+                cnt
+                , leaverbustercnt;
 
             do
             {
@@ -64,18 +66,17 @@ namespace LeagueBot
 
                                 bot.log("Leaverbuster detected");
 
-                                while (true)
-                                    try
+                                while (client.leaverbuster())
+                                {
+                                    leaverbustercnt = 0;
+
+                                    do
                                     {
-                                        if (client.leaverbuster() == true)
-                                            bot.wait(3000);
-                                        else
-                                            break;
-                                    }
-                                    catch
-                                    {
-                                        continue;
-                                    }
+                                        client.acceptQueue();
+
+                                        bot.wait(4000);
+                                    } while (leaverbustercnt < 10);
+                                }
                             }
 
                             if (restartneeded == true)
@@ -84,8 +85,8 @@ namespace LeagueBot
 
                                 client.startQueue();
                             }
-
-                            client.acceptQueue();
+                            else
+                                client.acceptQueue();
                         }
 
                         bot.wait(3000);
