@@ -74,13 +74,10 @@ namespace LeagueBot
 
                                     client.acceptQueue();
 
-                                    bot.wait(1000);
+                                    bot.wait(5000);
                                 }
                             }
-
-                            bot.wait(1000);
-
-                            if (client.inChampSelect() == false)
+                            else
                             {
                                 bot.wait(1000);
 
@@ -134,7 +131,7 @@ namespace LeagueBot
                                 break;
                         }
                         else
-                            bot.wait(1000);
+                            bot.wait(3000);
 
                         if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
                         {
