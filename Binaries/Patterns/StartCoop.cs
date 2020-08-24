@@ -24,9 +24,7 @@ namespace LeagueBot
                 , restartneeded = false;
 
             string[] champs = null;
-            int 
-                cnt
-                , leaverbustercnt;
+            int cnt;
 
             do
             {
@@ -52,6 +50,8 @@ namespace LeagueBot
 
                     bot.log("Attempting to search for game...");
 
+                    bot.wait(1000);
+
                     client.startQueue();
 
                     cnt = 0;
@@ -60,42 +60,41 @@ namespace LeagueBot
                     {
                         if (client.inChampSelect() == false)
                         {
+                            bot.wait(1000);
+
                             if (client.leaverbuster())
                             {
-                                restartneeded = true;
-
                                 bot.log("Leaverbuster detected");
 
-                                while (client.leaverbuster())
-                                {
-                                    leaverbustercnt = 0;
+                                bot.wait(1000);
 
+                                while (client.inChampSelect() == false)
+                                {
                                     bot.wait(1000);
 
-                                    do
-                                    {
-                                        client.acceptQueue();
+                                    client.acceptQueue();
 
-                                        bot.wait(4000);
-                                    } while (leaverbustercnt < 10);
+                                    bot.wait(1000);
                                 }
                             }
 
-                            if (restartneeded == true)
+                            bot.wait(1000);
+
+                            if (client.inChampSelect() == false)
                             {
-                                restartneeded = false;
+                                bot.wait(1000);
 
-                                client.startQueue();
-                            }
-                            else
                                 client.acceptQueue();
+                            }
                         }
-
-                        bot.wait(3000);
+                        else
+                            bot.wait(1000);
 
                         if (client.inChampSelect() == true)
                         {
                             bot.log("Match found");
+
+                            bot.wait(1000);
 
                             if (champs == null)
                                 champs = io.getChamps();
@@ -105,12 +104,19 @@ namespace LeagueBot
                                 {
                                     bot.log("Attempting to pick " + champ);
                                     client.pickChampionByName(champ);
+                                    bot.wait(1000);
                                 }
                             else
+                            {
                                 client.pickChampionByName(SELECTED_CHAMPION);
+
+                                bot.wait(1000);
+                            }
 
                             while (client.inChampSelect() == true)
                             {
+                                bot.wait(1000);
+
                                 if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
                                 {
                                     MethodFound = true;
@@ -118,7 +124,7 @@ namespace LeagueBot
                                     bot.log("Found league of legends process");
                                 }
 
-                                bot.wait(6000);
+                                bot.wait(2000);
 
                                 if (MethodFound == true)
                                     break;
@@ -127,6 +133,8 @@ namespace LeagueBot
                             if (MethodFound == true)
                                 break;
                         }
+                        else
+                            bot.wait(1000);
 
                         if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
                         {
@@ -134,7 +142,7 @@ namespace LeagueBot
 
                             bot.log("Found league of legends process");
 
-                            bot.wait(6000);
+                            bot.wait(3000);
 
                             break;
                         }
