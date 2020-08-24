@@ -70,6 +70,8 @@ namespace LeagueBot
                                 {
                                     leaverbustercnt = 0;
 
+                                    bot.wait(1000);
+
                                     do
                                     {
                                         client.acceptQueue();
