@@ -75,7 +75,7 @@ namespace LeagueBot
 
                         client.acceptQueue();
 
-                        bot.wait(6000);
+                        bot.wait(3000);
 
                         if (client.inChampSelect() == true)
                         {
