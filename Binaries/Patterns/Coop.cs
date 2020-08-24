@@ -283,33 +283,30 @@ namespace LeagueBot
                     if (!game.player.isThereAnAllyCreep() && !game.player.isThereAnEnemy() && !game.player.nearTowerStructure() && !game.player.isThereAnEnemyCreep())
                     {
                         //bot.log("im lost help!");
-                        if (game.player.tryMoveLightArea(1397, 683, "#65898F")) { }
-                        else if (game.player.tryMoveLightArea(966, 630, "#65898F")) { }
-                        else if (game.player.tryMoveLightArea(1444, 813, "#919970")) { }
+                        //if (game.player.tryMoveLightArea(1397, 683, "#65898F")) { }
+                        //else if (game.player.tryMoveLightArea(966, 630, "#65898F")) { }
+                        //else if (game.player.tryMoveLightArea(1444, 813, "#919970")) { }
+                        //else
+                        //{
+                        if (CreepHasBeenFound)
+                            CreepHasBeenFound = false;
                         else
                         {
-                            if (CreepHasBeenFound)
-                            {
-                                CreepHasBeenFound = false;
+                            allyIndex = incAllyIndex(allyIndex);
 
-                                game.camera.lockAlly(allyIndex);
-                            }
-                            else
-                            {
-                                allyIndex = incAllyIndex(allyIndex);
-
-                                bot.wait(5000);
-                            }
-
-                            game.moveCenterScreen();
-
-                            if (!game.player.isThereAnAllyCreep() || !game.player.isThereAnEnemyCreep()) //if player just afks, change index.
-                            {
-                                allyIndex = incAllyIndex(allyIndex);
-                            }
-
-                            bot.wait(500);
+                            bot.wait(5000);
                         }
+
+                        game.camera.lockAlly(allyIndex);
+
+                        game.moveCenterScreen();
+
+                        if (!game.player.isThereAnAllyCreep() || !game.player.isThereAnEnemyCreep()) //if player just afks, change index.
+                        {
+                            allyIndex = incAllyIndex(allyIndex);
+                        }
+
+                        bot.wait(500);
                     }
                 }
             }
