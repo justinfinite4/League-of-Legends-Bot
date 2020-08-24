@@ -115,6 +115,17 @@ namespace LeagueBot
                                 break;
                         }
 
+                        if (bot.isProcessOpen(GAME_PROCESS_NAME) == true)
+                        {
+                            MethodFound = true;
+
+                            bot.log("Found league of legends process");
+
+                            bot.wait(6000);
+
+                            break;
+                        }
+
                         cnt++;
                     }
                     while
